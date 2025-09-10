@@ -1,12 +1,12 @@
-// let arr = [1, 2, 3, 4, 5];
+let arr = [1, 2, 3, 4, 5];
 
-// arr.forEach(function(val){
-//     console.log(val + " hello");
-// });
+arr.forEach(function(val){
+    console.log(val + " hello");
+});
 
-// let newArr = arr.map(function(val){
-//     return val + 13;
-// });
+let newArr = arr.map(function(val){
+    return val + 13;
+});
 
 // console.log(newArr);
 
