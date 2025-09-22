@@ -72,7 +72,7 @@ app.post('/login', async (req, res) => {
         );
 
         res.cookie('token', token, { httpOnly: true });
-        res.status(200).send("Login successful");
+        res.status(200).redirect("/profile");
     } catch (err) {
         console.error(err);
         res.status(500).send("Error logging in");
@@ -80,8 +80,9 @@ app.post('/login', async (req, res) => {
 });
 
 // ================= PROFILE =================
-app.get('/profile', isLoggedIn, (req, res) => {
-    res.redirect('/login');
+app.get('/profile', isLoggedIn, async (req, res) => {
+    await userModel.findOne({email: req.user.email});
+    res.render('profile', { user });
 });
 
 // ================= LOGOUT =================
