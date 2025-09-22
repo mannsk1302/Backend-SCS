@@ -81,8 +81,20 @@ app.post('/login', async (req, res) => {
 
 // ================= PROFILE =================
 app.get('/profile', isLoggedIn, async (req, res) => {
-    await userModel.findOne({email: req.user.email});
+    const user = await userModel.findOne({ email: req.user.email }).populate('posts');
     res.render('profile', { user });
+});
+
+app.post('/post', isLoggedIn, async (req, res) => {
+    const user = await userModel.findOne({ email: req.user.email });
+    let {content} = req.body;
+    let post = await postModel.create({
+        user: user._id,
+        content
+    });
+    user.posts.push(post._id);
+    await user.save();
+    res.redirect('/profile');
 });
 
 // ================= LOGOUT =================
