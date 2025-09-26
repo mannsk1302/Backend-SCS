@@ -5,22 +5,7 @@ const path = require('path');
 const cookieParser = require('cookie-parser');
 const userModel = require('./models/user');
 const postModel = require('./models/post');
-const crypto = require('crypto');
-const multer = require('multer');
-
-const storage = multer.diskStorage({
-  destination: function (req, file, cb) {
-    cb(null, './public/images/uploads')
-  },
-  filename: function (req, file, cb) {
-    crypto.randomBytes(12, (err, bytes) => {
-        const fn = bytes.toString("hex") + path.extname(file.originalname);
-        cb(null, fn)
-    })
-  }
-})
-
-const upload = multer({ storage: storage })
+const upload = require('./utils/multerConfig');
 
 const app = express();
 
@@ -36,12 +21,15 @@ app.get('/', (req, res) => {
     res.render('index');
 });
 
-app.get('/test', (req, res) => {
-    res.render('test');
+app.get('/profile/upload', (req, res) => {
+    res.render('profileupload');
 });
 
-app.post('/upload', upload.single("image"), (req, res) => {
-    console.log(req.file);
+app.post('/upload', isLoggedIn, upload.single("image"), async (req, res) => {
+    let user = await userModel.findOne({ email: req.user.email });
+    user.profilePicture = req.file.filename;
+    await user.save();
+    res.redirect('/profile');
 });
 
 // ================= REGISTER =================
